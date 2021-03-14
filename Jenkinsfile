@@ -1,8 +1,5 @@
 pipeline {
 	agent any
-	triggers {
-		pollSCM '*/2 * * * *'
-	}
 	
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
@@ -11,10 +8,17 @@ pipeline {
     }
 
     stages {
+	    stage('enable webhook'){
+	  	    steps {
+			    script { properties([pipelineTriggers([githubPush()])])
+				   }
+		    }
+	    }
+			    
         stage('Build') {
             steps {
                 // Get some code from a GitHub repository
-                git credentialsId: 'github', url: 'git@github.com:smithakgowda/jenkins_test.git'
+                git credentialsId: 'github', url: 'git@github.com:sathishbob/jenkins_test.git'
 
                 // Run Maven on a Unix agent.
                 sh "mvn -Dmaven.test.failure.ignore=true -f api-gateway clean package"
